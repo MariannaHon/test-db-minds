@@ -1,15 +1,13 @@
-import { getAllContacts, getContactById, createContact, patchContact, deleteContact } from "../services/contacts.js";
+import { getAllRecords, createRecord, patchRecord, deleteWater } from "../services/water.js";
 
 import createHttpError from 'http-errors';
-
-import { env } from '../utils/env.js';
 
 
 export const getWaterController = async (req, res) => {
 
-    const { _id: userId } = req.user;
+    // const { _id: userId } = req.user;
 
-    const water = await getAllWater(userId);
+    const water = await getAllRecords();
     res.json({
         status: 200,
         message: "Successfully found water records!",
@@ -19,8 +17,8 @@ export const getWaterController = async (req, res) => {
 
 export const createWaterController = async (req, res) => {
 
-    const waterData = { ...req.body, userId: req.user._id };
-    const water = await createWater(waterData);
+    // const waterData = { ...req.body, userId: req.user._id };
+    const water = await createRecord(req.body);
 
     res.status(201).json({
         status: 201,
@@ -32,7 +30,7 @@ export const createWaterController = async (req, res) => {
 export const patchWaterController = async (req, res, next) => {
     const { recordId } = req.params;
 
-    const result = await patchWater(recordId, req.user._id, { ...req.body });
+    const result = await patchRecord(recordId, req.user._id, { ...req.body });
 
     if (!result) {
         next(createHttpError(404, 'Record not found'));
