@@ -1,6 +1,6 @@
 
 import { Router } from 'express';
-import waterRouter from './/water.js';
+import waterRouter from './water.js';
 import authRouter from './auth.js';
 import userRouter from './user.js';
 

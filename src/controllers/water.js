@@ -5,9 +5,9 @@ import createHttpError from 'http-errors';
 
 export const getWaterController = async (req, res) => {
 
-    // const { _id: userId } = req.user;
+    const { _id: userId } = req.user;
 
-    const water = await getAllRecords();
+    const water = await getAllRecords(userId);
     res.json({
         status: 200,
         message: "Successfully found water records!",
@@ -17,8 +17,8 @@ export const getWaterController = async (req, res) => {
 
 export const createWaterController = async (req, res) => {
 
-    // const waterData = { ...req.body, userId: req.user._id };
-    const water = await createRecord(req.body);
+    const waterData = { ...req.body, userId: req.user._id };
+    const water = await createRecord(waterData);
 
     res.status(201).json({
         status: 201,
@@ -30,7 +30,7 @@ export const createWaterController = async (req, res) => {
 export const patchWaterController = async (req, res, next) => {
     const { recordId } = req.params;
 
-    const result = await patchRecord(recordId, req.user._id, { ...req.body });
+    const result = await patchRecord(recordId, req.user._id, req.body);
 
     if (!result) {
         next(createHttpError(404, 'Record not found'));

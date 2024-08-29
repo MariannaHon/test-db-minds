@@ -1,24 +1,23 @@
-import { Router } from "express";
-import { getWaterController, createWaterController, patchWaterController, deleteWaterController } from "../controllers/water.js";
-import { ctrlWrapper } from "../utils/ctrlWrapper.js";
-import { validateBody } from "../middlewares/validateBody.js";
-import { createWaterSchema } from '../validation/water.js';
-import { updateWaterSchema } from "../validation/water.js";
-import { isValidId } from "../middlewares/isValidId.js";
-// import { authenticate } from "../middlewares/authenticate.js";
-
+import { Router } from 'express';
 
 const router = Router();
 
-// router.use(authenticate);
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { validateBody } from '../middlewares/validateBody.js';
 
-router.get('/', ctrlWrapper(getWaterController));
+import { registerUserSchema, loginUserSchema } from '../validation/auth.js';
+import { registerUserController, loginUserController, refreshUserSessionController, logoutUserController } from '../controllers/auth.js';
 
-router.post('/', validateBody(createWaterSchema), ctrlWrapper(createWaterController));
+router.post('/register', validateBody(registerUserSchema), ctrlWrapper(registerUserController),
+);
 
-router.patch('/:recordId', isValidId, validateBody(updateWaterSchema), ctrlWrapper(patchWaterController));
+router.post('/login', validateBody(loginUserSchema), ctrlWrapper(loginUserController),
+);
 
-router.delete('/:recordId', isValidId, ctrlWrapper(deleteWaterController));
+router.post('/refresh', ctrlWrapper(refreshUserSessionController));
+
+
+router.post('/logout', ctrlWrapper(logoutUserController));
 
 
 export default router;

@@ -11,5 +11,4 @@ export const validateBody = (schema) => async (req, res, next) => {
             message: error.details[0].message,
         });
     }
-    next();
 };

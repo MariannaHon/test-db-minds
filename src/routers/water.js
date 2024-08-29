@@ -6,12 +6,13 @@ import { validateBody } from "../middlewares/validateBody.js";
 import { createWaterSchema } from '../validation/water.js';
 import { updateWaterSchema } from "../validation/water.js";
 import { isValidId } from "../middlewares/isValidId.js";
-// import { authenticate } from "../middlewares/authenticate.js";
+import { authenticate } from "../middlewares/authenticate.js";
 
 
 const router = Router();
 
-// router.use(authenticate);
+router.use(authenticate);
+
 
 router.get('/', ctrlWrapper(getWaterController));
 
