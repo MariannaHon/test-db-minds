@@ -6,6 +6,7 @@ const userSchema = new Schema(
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
+        waterRate: { type: String, default: "1500ml", required: false },
     },
     { timestamps: true, versionKey: false },
 );

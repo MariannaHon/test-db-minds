@@ -1,6 +1,8 @@
-import { getAllRecords, createRecord, patchRecord, deleteWater } from "../services/water.js";
+import { getAllRecords, createRecord, patchRecord, deleteWater, getWaterStatsForMonth } from "../services/water.js";
 
 import createHttpError from 'http-errors';
+
+import { calculateWaterPercentage } from "../utils/calculateWaterPercentage.js";
 
 
 export const getWaterController = async (req, res) => {
@@ -54,4 +56,42 @@ export const deleteWaterController = async (req, res, next) => {
     }
 
     res.status(204).send();
+};
+
+
+export const getWaterStatsController = async (req, res, next) => {
+    try {
+        const { _id: userId, waterRate } = req.user;
+
+        const { percentage, records } = await calculateWaterPercentage(userId, waterRate);
+
+        res.json({
+            status: 200,
+            message: "Successfully get water stats!",
+            data: {
+                percentage,
+                records,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getWaterStatsMonthController = async (req, res, next) => {
+    try {
+        const { _id: userId, waterRate } = req.user;
+        const { month, year } = req.body;
+
+        const stats = await getWaterStatsForMonth(userId, month, year, waterRate);
+
+        res.json({
+            status: 200,
+            message: "Successfully get water stats for the month!",
+            data: stats,
+        });
+
+    } catch (error) {
+        next(error);
+    }
 };

@@ -8,6 +8,8 @@ import { updateWaterSchema } from "../validation/water.js";
 import { isValidId } from "../middlewares/isValidId.js";
 import { authenticate } from "../middlewares/authenticate.js";
 
+import { getWaterStatsController, getWaterStatsMonthController } from "../controllers/water.js";
+
 
 const router = Router();
 
@@ -21,6 +23,10 @@ router.post('/', validateBody(createWaterSchema), ctrlWrapper(createWaterControl
 router.patch('/:recordId', isValidId, validateBody(updateWaterSchema), ctrlWrapper(patchWaterController));
 
 router.delete('/:recordId', isValidId, ctrlWrapper(deleteWaterController));
+
+router.get('/stats', ctrlWrapper(getWaterStatsController));
+
+router.get('/stats/month', ctrlWrapper(getWaterStatsMonthController));
 
 
 export default router;
