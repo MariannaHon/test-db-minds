@@ -1,20 +1,22 @@
 
 import Joi from 'joi';
+import JoiDate from '@joi/date';
+
+const ExtendedJoi = Joi.extend(JoiDate);
 
 const addWaterErrorMessages = {
-    'string.base': 'Field {#label} must be a string.',
+    'number.base': 'Field {#label} must be a number.',
     'string.empty': 'Field {#label} cannot be empty.',
-    'string.min': 'Field {#label} should have a minimum length of {#limit}.',
-    'string.max': 'Field {#label} should have a maximum length of {#limit}.',
     'any.required': 'missing required {#label} field',
 };
 
+
 export const createWaterSchema = Joi.object({
-    amount: Joi.string().min(5).max(7).required().messages(addWaterErrorMessages),
-    time: Joi.string().min(4).max(8).required().messages(addWaterErrorMessages),
+    amount: Joi.number().min(10).max(5000).required().messages(addWaterErrorMessages),
+    time: ExtendedJoi.date().format('YYYY-MM-DD HH:mm').messages(addWaterErrorMessages),
 });
 
 export const updateWaterSchema = Joi.object({
-    amount: Joi.string().min(5).max(7),
-    time: Joi.string().min(4).max(8),
+    amount: Joi.number().min(10).max(5000),
+    time: ExtendedJoi.date().format('YYYY-MM-DD HH:mm'),
 });

@@ -1,9 +1,10 @@
 
 
-import { today } from "../services/water.js";
+import { getRecordsForPeriod } from "../services/water.js";
 
-export const calculateWaterPercentage = async (userId, waterRate) => {
-    const records = await today(userId);
+export const calculateWaterPercentage = async (userId, waterRate, start, end) => {
+
+    const records = await getRecordsForPeriod(userId, start, end);
 
     const waterToNumber = parseFloat(waterRate);
 

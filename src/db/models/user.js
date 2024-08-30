@@ -6,7 +6,9 @@ const userSchema = new Schema(
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
-        waterRate: { type: String, default: "1500ml", required: false },
+        gender: { type: String, enum: ['male', 'female'], default: 'female' },
+        avatarUrl: { type: String, default: null },
+        waterRate: { type: Number, default: 1500, required: false },
     },
     { timestamps: true, versionKey: false },
 );

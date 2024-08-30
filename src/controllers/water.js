@@ -1,8 +1,9 @@
-import { getAllRecords, createRecord, patchRecord, deleteWater, getWaterStatsForMonth } from "../services/water.js";
+import { getAllRecords, createRecord, patchRecord, deleteWater, today, getRecordsForPeriod } from "../services/water.js";
 
 import createHttpError from 'http-errors';
 
-import { calculateWaterPercentage } from "../utils/calculateWaterPercentage.js";
+import { startOfMonth, endOfMonth, eachDayOfInterval, format } from 'date-fns';
+
 
 
 export const getWaterController = async (req, res) => {
@@ -63,7 +64,7 @@ export const getWaterStatsController = async (req, res, next) => {
     try {
         const { _id: userId, waterRate } = req.user;
 
-        const { percentage, records } = await calculateWaterPercentage(userId, waterRate);
+        const { percentage, records } = await today(userId, waterRate);
 
         res.json({
             status: 200,
@@ -79,11 +80,36 @@ export const getWaterStatsController = async (req, res, next) => {
 };
 
 export const getWaterStatsMonthController = async (req, res, next) => {
+
     try {
         const { _id: userId, waterRate } = req.user;
-        const { month, year } = req.body;
 
-        const stats = await getWaterStatsForMonth(userId, month, year, waterRate);
+        const { month, year } = req.query;
+
+        const start = startOfMonth(new Date(year, month - 1));
+
+        const end = endOfMonth(new Date(year, month - 1));
+
+        const allRecords = await getRecordsForPeriod(userId, start, end);
+
+        const daysOfMonth = eachDayOfInterval({ start, end });
+
+        const stats = daysOfMonth.map((day) => {
+            const recordsForDay = allRecords.filter(record => format(record.time, 'yyyy-MM-dd') === format(day, 'yyy-MM-dd'));
+
+            const totalAmount = recordsForDay.reduce((sum, record) => sum + record.amount, 0);
+
+            const waterToNumber = parseFloat(waterRate);
+            const percentage = totalAmount / waterToNumber * 100;
+            const formattedDate = format(day, 'd, MMMM');
+
+            return {
+                date: formattedDate,
+                dailyWaterRate: `${waterRate} ml`,
+                consumedPercentage: `${percentage.toFixed(2)}%`,
+                consumptionCount: recordsForDay.length,
+            };
+        });
 
         res.json({
             status: 200,
